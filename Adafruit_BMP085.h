@@ -18,12 +18,10 @@
 #ifndef ADAFRUIT_BMP085_H
 #define ADAFRUIT_BMP085_H
 
-#if (ARDUINO >= 100)
- #include "Arduino.h"
-#else
- #include "WProgram.h"
-#endif
-#include "Wire.h"
+#include <Arduino.h>
+#include <stdint.h>
+
+#define ENABLE_ONLY_HIGH_RES
 
 #define BMP085_DEBUG 0
 
@@ -53,27 +51,33 @@
 
 
 class Adafruit_BMP085 {
- public:
-  Adafruit_BMP085();
-  boolean begin(uint8_t mode = BMP085_ULTRAHIGHRES);  // by default go highres
-  float readTemperature(void);
-  int32_t readPressure(void);
-  int32_t readSealevelPressure(float altitude_meters = 0);
-  float readAltitude(float sealevelPressure = 101325); // std atmosphere
-  uint16_t readRawTemperature(void);
-  uint32_t readRawPressure(void);
-  
- private:
-  int32_t computeB5(int32_t UT);
-  uint8_t read8(uint8_t addr);
-  uint16_t read16(uint8_t addr);
-  void write8(uint8_t addr, uint8_t data);
+public:
+    Adafruit_BMP085();
+#ifdef ENABLE_ONLY_HIGH_RES
+    boolean begin();  // by default go highres
+#else
+    boolean begin(uint8_t mode = BMP085_ULTRAHIGHRES);  // by default go highres
+#endif
 
-  uint8_t oversampling;
+    float correctTemperature(int32_t UT);
+    int32_t correctPressure(int32_t UT, int32_t UP);
+    uint16_t readRawTemperature(void);
+    uint32_t readRawPressure(void);
 
-  int16_t ac1, ac2, ac3, b1, b2, mb, mc, md;
-  uint16_t ac4, ac5, ac6;
+    float pressureToAltitude(float seaLevel, float atmospheric);
+    float seaLevelForAltitude(float altitude, float atmospheric);
+
+private:
+    uint8_t read8(uint8_t addr);
+    uint16_t read16(uint8_t addr);
+    void write8(uint8_t addr, uint8_t data);
+
+#ifndef ENABLE_ONLY_HIGH_RES
+    uint8_t oversampling;
+#endif
+
+    int16_t ac1, ac2, ac3, b1, b2, mb, mc, md;
+    uint16_t ac4, ac5, ac6;
 };
-
 
 #endif //  ADAFRUIT_BMP085_H
