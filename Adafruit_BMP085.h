@@ -64,8 +64,8 @@ public:
     uint16_t readRawTemperature(void);
     uint32_t readRawPressure(void);
 
-    float pressureToAltitude(float seaLevel, float atmospheric);
-    float seaLevelForAltitude(float altitude, float atmospheric);
+    static float pressureToAltitude(float seaLevel, float atmospheric);
+    static float seaLevelForAltitude(float altitude, float atmospheric);
 
 private:
     uint8_t read8(uint8_t addr);
