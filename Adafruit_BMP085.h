@@ -54,30 +54,30 @@ class Adafruit_BMP085 {
 public:
     Adafruit_BMP085();
 #ifdef ENABLE_ONLY_HIGH_RES
-    boolean begin();  // by default go highres
+    uint8_t begin();  // by default go highres
 #else
-    boolean begin(uint8_t mode = BMP085_ULTRAHIGHRES);  // by default go highres
+    uint8_t begin(uint8_t mode = BMP085_ULTRAHIGHRES);  // by default go highres
 #endif
 
     float correctTemperature(int32_t UT);
     int32_t correctPressure(int32_t UT, int32_t UP);
-    uint16_t readRawTemperature(void);
-    uint32_t readRawPressure(void);
+    uint16_t readRawTemperature(uint8_t& err);
+    uint32_t readRawPressure(uint8_t& err);
 
     static float pressureToAltitude(float seaLevel, float atmospheric);
     static float seaLevelForAltitude(float altitude, float atmospheric);
 
 private:
-    uint8_t read8(uint8_t addr);
-    uint16_t read16(uint8_t addr);
-    void write8(uint8_t addr, uint8_t data);
+    uint8_t read8(uint8_t addr, uint8_t& err);
+    uint16_t read16(uint8_t addr, uint8_t& err);
+    void write8(uint8_t addr, uint8_t data, uint8_t& err);
 
 #ifndef ENABLE_ONLY_HIGH_RES
     uint8_t oversampling;
 #endif
 
-    int16_t ac1, ac2, ac3, b1, b2, mb, mc, md;
-    uint16_t ac4, ac5, ac6;
+    int16_t ac1 = 0, ac2 = 0, ac3 = 0, b1 = 0, b2 = 0, mb = 0, mc = 0, md = 0;
+    uint16_t ac4 = 0, ac5 = 0, ac6 = 0;
 };
 
 #endif //  ADAFRUIT_BMP085_H
